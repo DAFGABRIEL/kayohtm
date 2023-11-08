@@ -17,7 +17,6 @@
 </head>
 <body>
     <h1>Gerenciamento Financeiro</h1>
-
     <form action="process.php" method="post">
         <label for="descricao">Descrição:</label>
         <input type="text" name="descricao" required>
@@ -30,7 +29,6 @@
 
         <input type="submit" value="Adicionar Transação">
     </form>
-
     <?php
     session_start();
     if (isset($_SESSION['username'])) {
@@ -43,38 +41,29 @@
         echo "Você não está logado.";
         $username = '';
     }
-
     $transactions = file('transactions.txt', FILE_IGNORE_NEW_LINES);
-
     $currentMonth = date('Y-m');
-
     if (!empty($transactions)) {
         if (isset($_POST['selectedMonth'])) {
             $currentMonth = $_POST['selectedMonth'];
         }
-
         $prevMonth = date('Y-m', strtotime($currentMonth . ' -1 month'));
         $nextMonth = date('Y-m', strtotime($currentMonth . ' +1 month'));
-
         echo '<form method="post">
                 <label for="selectedMonth">Selecione o mês:</label>
                 <input type="month" name="selectedMonth" value="' . $currentMonth . '" required>
                 <input type="submit" value="Filtrar">
               </form>';
-
         echo '<table>
                 <tr>
                     <th>Descrição</th>
                     <th>Valor</th>
                     <th>Data</th>
                 </tr>';
-        
         foreach ($transactions as $transaction) {
             $transactionData = explode('|', $transaction);
-            
             if (count($transactionData) === 4) {
                 list($transUsername, $descricao, $valor, $data) = $transactionData;
-
                 if ($transUsername === $username && strpos($data, $currentMonth) === 0) {
                     echo '<tr>
                             <td>' . $descricao . '</td>
@@ -87,7 +76,6 @@
                 error_log($errorMsg, 3, 'log.txt');
             }
         }
-        
         echo '</table>';
         
         echo '<form method="post">
